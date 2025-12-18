@@ -606,41 +606,45 @@
             });
             cameraUtils.start();
         }
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
 
         window.addEventListener('resize', () => {
             if (camera) { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }
         });
+        if (!isMobileDevice()) {
+            // ==========================================
+            // MOUSE CONTROLS Vandiep
+            // ==========================================
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX / window.innerWidth;
+                useMouseControl = true;
+            });
 
-        // ==========================================
-        // MOUSE CONTROLS Vandiep
-        // ==========================================
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX / window.innerWidth;
-            useMouseControl = true;
-        });
+            document.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                useMouseControl = true;
 
-        document.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            useMouseControl = true;
+                if (e.button === 0 && !e.ctrlKey) {
+                    // Left click - Explode
+                    state = 'EXPLODE';
+                } else if (e.button === 2) {
+                    // Right click - Heart
+                    state = 'HEART';
+                } else if (e.button === 1 || (e.button === 0 && e.ctrlKey)) {
+                    // Middle click or Ctrl+Left click - Tree
+                    state = 'TREE';
+                }
+            });
 
-            if (e.button === 0 && !e.ctrlKey) {
-                // Left click - Explode
-                state = 'EXPLODE';
-            } else if (e.button === 2) {
-                // Right click - Heart
-                state = 'HEART';
-            } else if (e.button === 1 || (e.button === 0 && e.ctrlKey)) {
-                // Middle click or Ctrl+Left click - Tree
-                state = 'TREE';
-            }
-        });
+            // Prevent context menu on right click
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            });
 
-        // Prevent context menu on right click
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        });
-
-         document.addEventListener('wheel', (e) => {
+            document.addEventListener('wheel', (e) => {
                 e.preventDefault();
                 useMouseControl = true;
 
@@ -667,6 +671,7 @@
                     }
                 }
             }, { passive: false });
+        }
     </script>
 </body>
 
